@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using WpfUserManagerDemo.Managers;
 
@@ -5,33 +7,56 @@ namespace WpfUserManagerDemo.Views
 {
     public partial class LoginWindow : Window
     {
+        private string _username;
+        public string Username
+        {
+            get => _username;
+            set { _username = value; OnPropertyChanged(); }
+        }
+
+        private string _password;
+        public string Password
+        {
+            get => _password;
+            set { _password = value; OnPropertyChanged(); }
+        }
+
+        private string _error;
+        public string Error
+        {
+            get => _error;
+            set { _error = value; OnPropertyChanged(); }
+        }
+
         public LoginWindow()
         {
             InitializeComponent();
+            DataContext = this; // 👈 databinding till fönstret självt
         }
 
         private void Login_Click(object sender, RoutedEventArgs e)
         {
-            // Hämtar UserManager-instansen från App.xaml
             var userManager = (UserManager)Application.Current.Resources["UserManager"];
-
-            string username = UsernameBox.Text;
-            string password = PasswordBox.Password;
-
-            // Försök logga in med angivna uppgifter
-            bool success = userManager.Login(username, password);
+            var success = userManager.Login(Username, Password);
 
             if (success)
             {
-                // Om inloggningen lyckades stäng loginfönstret
                 DialogResult = true;
                 Close();
             }
             else
             {
-                // Visa felmeddelande om uppgifterna inte stämde
-                ErrorText.Text = "Fel användarnamn eller lösenord.";
+                Error = "Fel användarnamn eller lösenord.";
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            Password = PasswordBox.Password;
         }
     }
 }

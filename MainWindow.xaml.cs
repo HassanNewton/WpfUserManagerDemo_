@@ -51,5 +51,7 @@ namespace WpfUserManagerDemo
                 this.Close();
             }
         }
+
+
     }
 }

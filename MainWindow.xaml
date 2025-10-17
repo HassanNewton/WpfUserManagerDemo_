@@ -26,5 +26,6 @@
             Click="Logout_Click"
             Content="Logga ut"
             IsEnabled="{Binding Source={StaticResource UserManager}, Path=IsAuthenticated}" />
+        
     </StackPanel>
 </Window>
